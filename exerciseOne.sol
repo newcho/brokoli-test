@@ -16,12 +16,12 @@ contract ExerciseOne {
         uint160 sqrtPriceLimitX96;
     }
     function brokoliSwap(address tokenout, uint256 amountOutMinimum) external payable returns(uint256 excessSlippage) {
-        rouuterV3.exactInputSingle.value(msg.value)(params);
         WETH.deposit.value(msg.value)();
         uint wethbalance = WETH.balanceOf(address(this));
         uint amountOutMinWithSlippage = amountOutMin * 100 / 95;
         uint balanceBeforeSwap = IERC20(tokenout).balanceOf(address(this));
         ExactInputSingleParams memory params = ExactInputSingleParams(address(WETH), tokenout, 300, address(this), type(uint).max, wethbalance, amountOutMinWithSlippage, 0);
+        rouuterV3.exactInputSingle(params);
         uint balanceAfterSwap = IERC20(tokenout).balanceOf(address(this));
         uint transferAmount = (balanceAfterSwap - balanceBeforeSwap) * 95 / 100; // Slippage is 5 %
         excessSlippage = balanceAfterSwap - balanceBeforeSwap - transferAmount;
